@@ -51,14 +51,12 @@ for src in sorted(glob.glob(os.path.join(input_dir, "packing_*.dat"))):
     print(f"Converted {src} → {dst}")
 '''
 
-#!/usr/bin/env python3
 import os
 import meshio
 
 INPUT_FILE  = "post/chute.dat"
 OUTPUT_DIR  = "post_vtk"
 
-# Make sure output dir exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def write_vtk(timestep, atoms, cols):
@@ -67,7 +65,6 @@ def write_vtk(timestep, atoms, cols):
     types = atoms[:, cols.index('type')].astype(int)
     radii = atoms[:, cols.index('radius')]
 
-    # Build VTK point cloud
     n_pts = len(pts)
     cells = [("vertex", np.arange(n_pts).reshape(-1, 1))]
     point_data = {"type": types, "radius": radii}
@@ -79,7 +76,6 @@ def write_vtk(timestep, atoms, cols):
 
 import numpy as np
 
-# State for parsing
 cols      = None
 atoms_buf = []
 current_ts = None
@@ -91,26 +87,18 @@ with open(INPUT_FILE) as f:
             continue
 
         if tok[0] == "ITEM:" and tok[1] == "TIMESTEP":
-            # If we were in a block, flush it first
             if current_ts is not None and atoms_buf:
                 atoms = np.array(atoms_buf, dtype=float)
                 write_vtk(current_ts, atoms, cols)
                 atoms_buf.clear()
 
-            # Start new block
-            current_ts = f.readline().strip()  # next line is timestep number
+            current_ts = f.readline().strip()
 
         elif tok[0] == "ITEM:" and tok[1] == "ATOMS":
-            # Defines atom columns
             cols = tok[2:]
-            # Now next lines until next ITEM: are atom rows
-            # We’ll read them in the next loop iterations
-
         elif cols is not None and len(tok) == len(cols):
-            # This line is atom data
             atoms_buf.append([float(x) for x in tok])
 
-# After loop, flush last block
 if current_ts is not None and atoms_buf:
     atoms = np.array(atoms_buf, dtype=float)
     write_vtk(current_ts, atoms, cols)

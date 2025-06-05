@@ -1,0 +1,21 @@
+LIGGGHTS (Version LIGGGHTS-PUBLIC 3.8.0, compiled 2025-05-22-11:49:02 by richardanderson, git commit 3d5c00f20519e6bb6eb6756f51f1ad36564e649d)
+# in.convert_rst
+
+clear
+units         si
+atom_style    granular
+atom_modify   map array
+boundary      f f f
+newton        off
+
+# communicate velocities so pair_gran can initialize
+communicate   single vel yes
+
+# neighbor settings for granular
+neighbor      0.2 bin
+neigh_modify  delay 0
+
+# define the same contact model (no actual timestepping will occur)
+pair_style    gran model hertz tangential history
+pair_coeff    * *
+ERROR: Pair_coeff command before simulation box is defined (../input.cpp:1562)
