@@ -41,36 +41,26 @@ inner_taper = tube_segment(r_in_i, r_main_i, h_taper, h_inlet)
 inner_main  = tube_segment(r_main_i, r_main_i, h_main, h_inlet+h_taper)
 inner_out   = tube_segment(r_main_i, r_main_i, h_outlet, h_inlet+h_taper+h_main)
 
-# reverse inner faces
 for seg in [inner_inlet, inner_taper, inner_main, inner_out]:
     seg.faces = seg.faces[:, ::-1]
 
-# assemble hollow shell
 hollow_shell = trimesh.util.concatenate([
     outer_inlet, outer_taper, outer_main, outer_out,
     inner_inlet, inner_taper, inner_main, inner_out
 ])
 
-# ----------------------------------------------------------
-# Positioning block: move mouth to z=0.15 and center to (-0.2,0)
-# ----------------------------------------------------------
-# compute current bounds
-bounds = hollow_shell.bounds  # shape (2,3): [[min x,y,z], [max x,y,z]]
+bounds = hollow_shell.bounds  
 current_top_z    = bounds[1, 2]
 current_center_xy = (bounds[0, :2] + bounds[1, :2]) / 2
 
-# desired placement
 desired_top_z    = 0.15
-desired_center_xy = np.array([0, 0])  # = [-0.2, 0.0]
+desired_center_xy = np.array([0, 0])  
 
-# compute translation vector
 dx, dy = desired_center_xy - current_center_xy
 dz     = desired_top_z    - current_top_z
 
-# apply
 hollow_shell.apply_translation([dx, dy, dz])
 
-# export
 output_path ='/Users/richardanderson/workdir/suliwork/minipebbles/meshes/GPBR_smooth_ascii_hollow.stl'
 hollow_shell.export(output_path, file_type='stl')
 print(f"ASCII STL written to {output_path}")

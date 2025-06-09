@@ -75,6 +75,10 @@ settings.batches = 100
 settings.inactive = 10
 settings.particles = 1000
 
+settings.particle_tracks      = True        
+settings.particle_track_depth = 8           
+settings.particle_track_file  = "tracks.h5"
+
 model = openmc.Model(
     geometry,
     openmc.Materials(list(geometry.get_all_materials().values())),
