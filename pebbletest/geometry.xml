@@ -1316,9 +1316,9 @@
   <surface coeffs="0.0 0.0 0.0 0.0315" id="2" type="sphere"/>
   <surface coeffs="0.0 0.0 0.0 0.035" id="3" type="sphere"/>
   <surface coeffs="0.0 0.0 0.0 0.0385" id="4" type="sphere"/>
-  <surface boundary="reflective" coeffs="0.0 0.0 0.5" id="5" type="z-cylinder"/>
-  <surface boundary="reflective" coeffs="-0.5" id="6" type="z-plane"/>
-  <surface boundary="reflective" coeffs="0.5" id="7" type="z-plane"/>
+  <surface boundary="vacuum" coeffs="0.0 0.0 0.5" id="5" type="z-cylinder"/>
+  <surface boundary="vacuum" coeffs="-0.5" id="6" type="z-plane"/>
+  <surface boundary="vacuum" coeffs="0.5" id="7" type="z-plane"/>
   <surface coeffs="-0.020131785247041956 0.0011365777237307727 0.03943128419504316 0.0425" id="740" type="sphere"/>
   <surface coeffs="0.17077654067293005 -0.12223911888880554 0.024944227030585908 0.0425" id="741" type="sphere"/>
   <surface coeffs="-0.1625567926604032 -0.12223911888880554 0.024944227030585908 0.0425" id="742" type="sphere"/>

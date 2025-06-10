@@ -4,6 +4,15 @@ import numpy as np
 import openmc
 import openmc.model
 import openmc.deplete
+import glob
+import warnings
+import os
+warnings.filterwarnings(
+    'ignore',
+    message='Failed to check if object ".*" exists',
+    category=RuntimeWarning
+)
+
 
 fuel = openmc.Material(name='Fuel')
 fuel.set_density('g/cm3', 10.5)
@@ -49,9 +58,9 @@ triso_univ = openmc.Universe(cells=cells)
 
 radius = 0.5
 height = 1.0
-outer_cyl = openmc.ZCylinder(r=radius, boundary_type='reflective')
-bottom = openmc.ZPlane(z0=-height / 2, boundary_type='reflective')
-top = openmc.ZPlane(z0=+height / 2, boundary_type='reflective')
+outer_cyl = openmc.ZCylinder(r=radius, boundary_type='vacuum')
+bottom = openmc.ZPlane(z0=-height / 2, boundary_type='vacuum')
+top = openmc.ZPlane(z0=+height / 2, boundary_type='vacuum')
 region = -outer_cyl & +bottom & -top
 
 outer_radius = 425.0e-4
@@ -73,7 +82,14 @@ settings = openmc.Settings()
 settings.run_mode = 'eigenvalue'
 settings.batches = 100
 settings.inactive = 10
-settings.particles = 1000
+settings.particles = 100
+settings.output = {'tallies': False}
+
+## New ##
+settings.particle_tracks      = True
+settings.particle_track_depth = 8
+settings.particle_track_file  = "tracks.h5"
+#########
 
 model = openmc.Model(
     geometry,
@@ -85,15 +101,71 @@ r_kernel = 0.025
 n_triso = 12000
 V_kernel = (4.0 / 3.0) * math.pi * r_kernel**3
 fuel.volume = len(trisos)*n_triso * V_kernel
+model.export_to_xml()
+
+## New ##
+'''
+vox = openmc.Plot()
+vox.type       = 'voxel'
+vox.filename   = 'geom'
+vox.width      = (1.0, 1.0, 1.0)
+vox.pixels     = (400, 400, 400)
+vox.color_by   = 'material'
+plots = openmc.Plots([vox])
+plots.export_to_xml()
+openmc.plot_geometry(vox)
+
+openmc.voxel_to_vtk('geom.h5', 'geom.vti')
+'''
+########
 
 if __name__ == "__main__":
+    '''
+    patterns = [
+        "openmc_simulation_*.h5",
+        "statepoint.*.h5",
+        "summary.h5",
+        "depletion_results.h5",
+        "tallies.out"
+    ]
+    '''
+
+    patterns = [
+        "openmc_simulation_*.h5",
+        "statepoint.*.h5",
+        "summary.h5",
+        "depletion_results.h5",
+        "tallies.out",
+        "geometry.xml",
+        "materials.xml",
+        "plots.xml",
+        "settings.xml",
+        "geom.h5",
+        "geom.vti",
+        "tallies.xml"
+    ]
+
+    for pat in patterns:
+        for f in glob.glob(pat):
+            try:
+                os.remove(f)
+                print(f"Removed old file: {f}")
+            except OSError:
+                pass
+
     openmc.config["chain_file"] = "/Users/richardanderson/openmc_data/chains/chain_endfb71_pwr.xml"
     openmc.config["cross_sections"] = "/Users/richardanderson/openmc_data/endfb71/cross_sections.xml"
+
     op = openmc.deplete.CoupledOperator(
         model,
         chain_file="/Users/richardanderson/openmc_data/chains/chain_endfb71_pwr.xml"
     )
-    timesteps = [(30, 'd')] * 3
+
+    total_days = 100
+    n_steps    = 5
+
+    dt = total_days / n_steps
+
+    timesteps = [dt] * n_steps
     power = 250
     openmc.deplete.CECMIntegrator(op, timesteps, power, timestep_units='d').integrate()
-

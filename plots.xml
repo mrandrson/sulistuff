@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <plots>
-  <plot color_by="cell" id="16" type="solid_raytrace">
+  <plot color_by="cell" id="2" type="solid_raytrace">
     <pixels>600 600</pixels>
     <camera_position>0.5345224838248488 1.3363062095621219 0.8017837257372731</camera_position>
     <look_at>0 0 0</look_at>
     <horizontal_field_of_view>70.0</horizontal_field_of_view>
     <light_position>10 20 30</light_position>
     <diffuse_fraction>0.1</diffuse_fraction>
-    <opaque_ids>15217 15218</opaque_ids>
+    <opaque_ids>2 3</opaque_ids>
   </plot>
 </plots>
