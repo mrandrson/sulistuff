@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<plots>
+  <plot color_by="material" filename="geom" id="1" type="voxel">
+    <pixels>400 400 400</pixels>
+    <origin>0.0 0.0 0.0</origin>
+    <width>1.0 1.0 1.0</width>
+  </plot>
+</plots>
