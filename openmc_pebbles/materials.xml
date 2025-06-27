@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <materials>
-  <material depletable="true" id="1" name="Fuel" volume="574.9114556069322">
+  <material depletable="true" id="1" name="Fuel">
     <density units="g/cm3" value="10.5"/>
     <nuclide ao="0.046716" name="U235"/>
     <nuclide ao="0.28697" name="U238"/>
